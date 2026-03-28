@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- CÁC THẺ META SEO QUAN TRỌNG -->
+    <title>Phần Mềm Test Bàn Phím Online | Kiểm Tra Bàn Phím Win & Mac</title>
+    <meta name="description" content="Công cụ test bàn phím máy tính online miễn phí, nhanh chóng. Hỗ trợ kiểm tra phím liệt, kẹt phím cho cả bàn phím Windows và Macbook. Giao diện đẹp, dễ sử dụng.">
+    <meta name="keywords" content="test bàn phím, kiểm tra bàn phím, keyboard tester, test phím macbook, test phím cơ, lỗi bàn phím">
+    <link rel="canonical" href="https://yourdomain.com/" />
+    
+    <!-- SCHEMA MARKUP TỐI ƯU SEO (THỦ THUẬT LÊN TOP) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Pro Keyboard Tester",
+      "url": "https://yourdomain.com/",
+      "description": "Công cụ test bàn phím máy tính online miễn phí. Kiểm tra lỗi liệt phím, kẹt phím, chập phím cho hệ điều hành Windows và Macbook (Apple).",
+      "applicationCategory": "UtilitiesApplication",
+      "operatingSystem": "Windows, macOS, Linux, ChromeOS",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "VND"
+      }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [{
+        "@type": "Question",
+        "name": "Làm sao để biết bàn phím máy tính bị liệt hay hỏng?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Bạn chỉ cần mở trang Keyboard Tester của chúng tôi, gõ lần lượt từng phím. Nếu phím vật lý được bấm nhưng trên màn hình không sáng màu xanh, chứng tỏ phím đó đã bị liệt hoặc lỗi kết nối."
+        }
+      },{
+        "@type": "Question",
+        "name": "Công cụ này có test được bàn phím Macbook không?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Hoàn toàn được. Bạn chỉ cần chọn nút 'Mac / Apple' ở góc trên để chuyển đổi sang giao diện phím chuẩn của Macbook (có phím Command, Option)."
+        }
+      }]
+    }
+    </script>
+
+    <!-- Tailwind CSS cho UI/UX nhanh & đẹp -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font chữ hiện đại -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        
+        /* Hiệu ứng phím */
+        .key {
+            transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+        }
+        .key.pressed {
+            transform: translateY(4px) scale(0.98);
+            box-shadow: 0 0px 0px 0px rgba(0, 0, 0, 0.5), inset 0 2px 4px rgba(0, 0, 0, 0.3);
+            background-color: #3b82f6; /* Blue 500 */
+            color: white;
+            border-color: #2563eb;
+        }
+        .key.tested {
+            background-color: #10b981; /* Emerald 500 */
+            color: white;
+            border-color: #059669;
+        }
+
+        /* Quảng cáo Placeholder (Khi chưa có Ads thật) */
+        .ad-slot {
+            background: repeating-linear-gradient(
+                45deg,
+                #1f2937,
+                #1f2937 10px,
+                #374151 10px,
+                #374151 20px
+            );
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #9ca3af;
+            font-weight: 600;
+            border: 1px dashed #4b5563;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-100 min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="border-b border-gray-800 bg-gray-900/50 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center font-bold text-xl shadow-lg shadow-blue-500/30">
+                    KT
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-emerald-400">Pro Keyboard Tester</h1>
+                    <p class="text-xs text-gray-400">Kiểm tra bàn phím online nhanh chóng</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                <!-- Nút chuyển đổi HĐH -->
+                <div class="bg-gray-800 p-1 rounded-lg flex items-center shadow-inner">
+                    <button id="btn-win" class="px-4 py-2 text-sm font-medium rounded-md bg-gray-700 text-white shadow transition-colors" onclick="switchOS('win')">Windows</button>
+                    <button id="btn-mac" class="px-4 py-2 text-sm font-medium rounded-md text-gray-400 hover:text-white transition-colors" onclick="switchOS('mac')">Mac / Apple</button>
+                </div>
+                <button onclick="resetTest()" class="px-4 py-2 bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500 hover:text-white rounded-lg text-sm font-medium transition-all">
+                    Reset Lại
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow flex flex-col items-center py-8 px-4 w-full">
+        
+        <!-- VỊ TRÍ ĐẶT QUẢNG CÁO GOOGLE ADSENSE SỐ 1 (TOP LEADERBOARD) -->
+        <div class="w-full max-w-4xl h-[90px] mb-8 ad-slot rounded-lg overflow-hidden relative">
+            <span>[Vị trí Quảng Cáo Google Adsense 728x90]</span>
+            <!-- Thay thế dòng này bằng script AdSense của bạn -->
+            <!-- <ins class="adsbygoogle" style="display:inline-block;width:728px;height:90px" data-ad-client="ca-pub-XXXXXX" data-ad-slot="XXXXXX"></ins> -->
+        </div>
+
+        <!-- Bảng thông tin phím vừa bấm -->
+        <div class="mb-8 flex gap-4 text-center">
+            <div class="bg-gray-800 border border-gray-700 rounded-xl p-4 min-w-[120px] shadow-lg">
+                <p class="text-xs text-gray-400 mb-1 uppercase tracking-wider">Phím vừa nhấn</p>
+                <p id="last-key" class="text-2xl font-bold text-blue-400">-</p>
+            </div>
+            <div class="bg-gray-800 border border-gray-700 rounded-xl p-4 min-w-[120px] shadow-lg">
+                <p class="text-xs text-gray-400 mb-1 uppercase tracking-wider">Mã phím (Code)</p>
+                <p id="last-code" class="text-2xl font-bold text-emerald-400">-</p>
+            </div>
+        </div>
+
+        <!-- Lịch sử phím đã bấm -->
+        <div class="mb-8 w-full max-w-5xl">
+            <div class="bg-gray-800 border border-gray-700 rounded-xl p-4 shadow-lg w-full">
+                <div class="flex justify-between items-center mb-2">
+                    <p class="text-xs text-gray-400 uppercase tracking-wider font-semibold">Lịch sử phím đã ấn</p>
+                    <span id="history-count" class="text-xs bg-gray-700 text-gray-300 px-2 py-1 rounded-md">0 lượt bấm</span>
+                </div>
+                <div id="key-history" class="flex flex-wrap gap-2 max-h-32 overflow-y-auto p-3 bg-gray-900/50 rounded-lg min-h-[4.5rem] items-start content-start border border-gray-700/50 shadow-inner">
+                    <!-- Các phím đã bấm sẽ xuất hiện ở đây -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Khung chứa bàn phím (Render bằng JS) -->
+        <div class="bg-gray-800/50 p-6 md:p-8 rounded-2xl border border-gray-700 shadow-2xl w-full max-w-5xl overflow-x-auto">
+            <div id="keyboard-container" class="min-w-[800px] flex flex-col gap-2">
+                <!-- Các hàng phím sẽ được tạo ở đây -->
+            </div>
+        </div>
+
+        <!-- Thông báo nhỏ -->
+        <p class="mt-6 text-sm text-gray-500 flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            Lưu ý: Một số phím hệ thống (Fn, PrintScreen, Win/Cmd kết hợp) có thể bị trình duyệt chặn hoặc không nhận diện được.
+        </p>
+
+        <!-- VỊ TRÍ ĐẶT QUẢNG CÁO GOOGLE ADSENSE SỐ 2 (NỘI DUNG) -->
+        <div class="w-full max-w-4xl h-[250px] mt-12 ad-slot rounded-lg overflow-hidden">
+            <span>[Vị trí Quảng Cáo Google Adsense 300x250 hoặc Responsive]</span>
+            <!-- Thay thế dòng này bằng script AdSense của bạn -->
+        </div>
+
+        <!-- Phần Content SEO & FAQ CHUYÊN SÂU -->
+        <article class="max-w-4xl mt-16 w-full text-left">
+            <div class="prose prose-invert prose-blue max-w-none mb-10">
+                <h2 class="text-3xl font-bold text-white mb-6">Công Cụ Test Bàn Phím (Keyboard Tester) Online Toàn Diện</h2>
+                <p class="text-gray-300 text-lg leading-relaxed">
+                    Chào mừng bạn đến với <strong>Pro Keyboard Tester</strong> - phần mềm kiểm tra bàn phím trực tuyến miễn phí, chính xác và dễ sử dụng nhất. Dù bạn đang sử dụng PC chạy Windows, Laptop, hay Macbook, công cụ của chúng tôi giúp bạn chẩn đoán nhanh chóng mọi vấn đề phần cứng chỉ trong vài giây.
+                </p>
+                
+                <h3 class="text-2xl font-semibold text-white mt-8 mb-4">Tại sao bạn nên kiểm tra bàn phím thường xuyên?</h3>
+                <ul class="list-disc list-inside text-gray-400 space-y-2">
+                    <li><strong>Mua laptop/bàn phím cũ:</strong> Đây là bước bắt buộc để tránh mua phải thiết bị hỏng hóc, liệt phím.</li>
+                    <li><strong>Kiểm tra lỗi chập phím (Key chatter):</strong> Bấm 1 lần nhưng ra 2-3 ký tự. Phần "Lịch sử phím đã ấn" của chúng tôi sinh ra để bắt lỗi này.</li>
+                    <li><strong>Bảo dưỡng định kỳ:</strong> Phát hiện sớm bụi bẩn kẹt dưới switch của bàn phím cơ.</li>
+                </ul>
+            </div>
+
+            <!-- FAQ Section tối ưu cho Google "People Also Ask" -->
+            <div class="w-full mt-10">
+                <h2 class="text-2xl font-bold text-white mb-6">Câu Hỏi Thường Gặp (FAQ)</h2>
+                <div class="space-y-4">
+                    <!-- FAQ 1 -->
+                    <details class="group bg-gray-800 border border-gray-700 rounded-lg p-4 cursor-pointer">
+                        <summary class="font-semibold text-lg text-gray-200 group-hover:text-blue-400 transition-colors list-none flex justify-between items-center">
+                            Làm sao để biết bàn phím máy tính bị liệt hay hỏng?
+                            <span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+                        </summary>
+                        <p class="text-gray-400 mt-4 leading-relaxed">
+                            Bạn chỉ cần mở trang Keyboard Tester, gõ lần lượt từng phím. Nếu phím vật lý được bấm nhưng trên giao diện web phím đó không chuyển sang màu xanh lá, chứng tỏ phím đã bị liệt, bụi bẩn gây kẹt switch hoặc hỏng mạch.
+                        </p>
+                    </details>
+                    
+                    <!-- FAQ 2 -->
+                    <details class="group bg-gray-800 border border-gray-700 rounded-lg p-4 cursor-pointer">
+                        <summary class="font-semibold text-lg text-gray-200 group-hover:text-blue-400 transition-colors list-none flex justify-between items-center">
+                            Web này có test được bàn phím Macbook không?
+                            <span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+                        </summary>
+                        <p class="text-gray-400 mt-4 leading-relaxed">
+                            Hoàn toàn hỗ trợ. Hãy click vào nút <strong>"Mac / Apple"</strong> ở góc trên bên phải màn hình. Giao diện sẽ tự động chuyển đổi sang layout chuẩn của Apple (hiển thị phím Command ⌘ và Option ⌥) để bạn test chính xác nhất.
+                        </p>
+                    </details>
+
+                    <!-- FAQ 3 -->
+                    <details class="group bg-gray-800 border border-gray-700 rounded-lg p-4 cursor-pointer">
+                        <summary class="font-semibold text-lg text-gray-200 group-hover:text-blue-400 transition-colors list-none flex justify-between items-center">
+                            Tôi bấm phím Fn, Print Screen nhưng web không nhận?
+                            <span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+                        </summary>
+                        <p class="text-gray-400 mt-4 leading-relaxed">
+                            Phím <strong>Fn (Function)</strong> thường là phím can thiệp trực tiếp vào phần cứng của máy tính, không gửi tín hiệu (keycode) lên trình duyệt web nên phần mềm không thể nhận diện. Các phím như Print Screen đôi khi bị hệ điều hành chặn lại để thực hiện lệnh chụp màn hình mặc định.
+                        </p>
+                    </details>
+                </div>
+            </div>
+        </article>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-gray-800 bg-gray-950 py-8 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 text-center text-gray-500 text-sm">
+            <p>&copy; 2026 Pro Keyboard Tester. Được thiết kế tối ưu cho trải nghiệm người dùng.</p>
+        </div>
+    </footer>
+
+    <script>
+        // --- DATA BÀN PHÍM (Layout chuẩn TKL 87 phím) ---
+        const layoutCode = [
+            // Row 0
+            [
+                { code: 'Escape', label: 'Esc', width: 'w-12' },
+                { code: 'F1', label: 'F1', ml: 'ml-4' }, { code: 'F2', label: 'F2' }, { code: 'F3', label: 'F3' }, { code: 'F4', label: 'F4' },
+                { code: 'F5', label: 'F5', ml: 'ml-4' }, { code: 'F6', label: 'F6' }, { code: 'F7', label: 'F7' }, { code: 'F8', label: 'F8' },
+                { code: 'F9', label: 'F9', ml: 'ml-4' }, { code: 'F10', label: 'F10' }, { code: 'F11', label: 'F11' }, { code: 'F12', label: 'F12' }
+            ],
+            // Row 1
+            [
+                { code: 'Backquote', label: '` ~' }, { code: 'Digit1', label: '1 !' }, { code: 'Digit2', label: '2 @' }, { code: 'Digit3', label: '3 #' },
+                { code: 'Digit4', label: '4 $' }, { code: 'Digit5', label: '5 %' }, { code: 'Digit6', label: '6 ^' }, { code: 'Digit7', label: '7 &' },
+                { code: 'Digit8', label: '8 *' }, { code: 'Digit9', label: '9 (' }, { code: 'Digit0', label: '0 )' }, { code: 'Minus', label: '- _' },
+                { code: 'Equal', label: '= +' }, { code: 'Backspace', label: 'Backspace', width: 'flex-grow' }
+            ],
+            // Row 2
+            [
+                { code: 'Tab', label: 'Tab', width: 'w-20' }, { code: 'KeyQ', label: 'Q' }, { code: 'KeyW', label: 'W' }, { code: 'KeyE', label: 'E' },
+                { code: 'KeyR', label: 'R' }, { code: 'KeyT', label: 'T' }, { code: 'KeyY', label: 'Y' }, { code: 'KeyU', label: 'U' },
+                { code: 'KeyI', label: 'I' }, { code: 'KeyO', label: 'O' }, { code: 'KeyP', label: 'P' }, { code: 'BracketLeft', label: '[ {' },
+                { code: 'BracketRight', label: '] }' }, { code: 'Backslash', label: '\\ |', width: 'flex-grow' }
+            ],
+            // Row 3
+            [
+                { code: 'CapsLock', label: 'Caps Lock', width: 'w-24' }, { code: 'KeyA', label: 'A' }, { code: 'KeyS', label: 'S' }, { code: 'KeyD', label: 'D' },
+                { code: 'KeyF', label: 'F' }, { code: 'KeyG', label: 'G' }, { code: 'KeyH', label: 'H' }, { code: 'KeyJ', label: 'J' },
+                { code: 'KeyK', label: 'K' }, { code: 'KeyL', label: 'L' }, { code: 'Semicolon', label: '; :' }, { code: 'Quote', label: '\' "' },
+                { code: 'Enter', label: 'Enter', width: 'flex-grow' }
+            ],
+            // Row 4
+            [
+                { code: 'ShiftLeft', label: 'Shift', width: 'w-32' }, { code: 'KeyZ', label: 'Z' }, { code: 'KeyX', label: 'X' }, { code: 'KeyC', label: 'C' },
+                { code: 'KeyV', label: 'V' }, { code: 'KeyB', label: 'B' }, { code: 'KeyN', label: 'N' }, { code: 'KeyM', label: 'M' },
+                { code: 'Comma', label: ', <' }, { code: 'Period', label: '. >' }, { code: 'Slash', label: '/ ?' }, { code: 'ShiftRight', label: 'Shift', width: 'flex-grow' }
+            ],
+            // Row 5 (Hàng dưới cùng - Cần thay đổi theo Win/Mac)
+            [
+                { code: 'ControlLeft', label: 'Ctrl', width: 'w-16' }, 
+                { code: 'MetaLeft', winLabel: 'Win ⊞', macLabel: 'Cmd ⌘', width: 'w-16' }, 
+                { code: 'AltLeft', winLabel: 'Alt', macLabel: 'Opt ⌥', width: 'w-16' },
+                { code: 'Space', label: '', width: 'flex-grow' }, 
+                { code: 'AltRight', winLabel: 'Alt', macLabel: 'Opt ⌥', width: 'w-16' }, 
+                { code: 'MetaRight', winLabel: 'Win ⊞', macLabel: 'Cmd ⌘', width: 'w-16' }, 
+                { code: 'ContextMenu', label: 'Menu', width: 'w-16' }, 
+                { code: 'ControlRight', label: 'Ctrl', width: 'w-16' }
+            ]
+        ];
+
+        let currentOS = 'win'; // 'win' hoặc 'mac'
+        const testedKeys = new Set();
+        let totalPresses = 0; // Biến đếm tổng số lần bấm phím
+
+        // --- RENDER GIAO DIỆN BÀN PHÍM ---
+        function renderKeyboard() {
+            const container = document.getElementById('keyboard-container');
+            container.innerHTML = '';
+
+            layoutCode.forEach(row => {
+                const rowDiv = document.createElement('div');
+                rowDiv.className = 'flex gap-2 justify-center w-full';
+
+                row.forEach(keyData => {
+                    const keyBtn = document.createElement('div');
+                    
+                    // Xử lý label theo HĐH
+                    let label = keyData.label;
+                    if (keyData.winLabel || keyData.macLabel) {
+                        label = currentOS === 'win' ? keyData.winLabel : keyData.macLabel;
+                    }
+
+                    // Thiết lập class
+                    let classes = `key flex items-center justify-center bg-gray-700 border border-gray-600 rounded-md text-sm font-medium h-12 cursor-default select-none ${keyData.width || 'w-12'} ${keyData.ml || ''}`;
+                    
+                    // Giữ trạng thái đã test nếu re-render
+                    if (testedKeys.has(keyData.code)) {
+                        classes += ' tested';
+                    }
+
+                    keyBtn.className = classes;
+                    keyBtn.id = `key-${keyData.code}`;
+                    keyBtn.innerHTML = label;
+
+                    rowDiv.appendChild(keyBtn);
+                });
+                container.appendChild(rowDiv);
+            });
+        }
+
+        // --- XỬ LÝ SỰ KIỆN BẤM PHÍM ---
+        function handleKeyDown(e) {
+            // Ngăn chặn các phím tắt mặc định để khỏi bị out trang (trừ F5, F12 để dev còn dùng)
+            if(!['F5', 'F12'].includes(e.code)) {
+                e.preventDefault();
+            }
+
+            const keyCode = e.code;
+            const keyDisplay = e.key === ' ' ? 'Space' : e.key;
+            document.getElementById('last-key').innerText = keyDisplay.toUpperCase();
+            document.getElementById('last-code').innerText = keyCode;
+
+            const keyEl = document.getElementById(`key-${keyCode}`);
+            if (keyEl) {
+                keyEl.classList.add('pressed');
+                keyEl.classList.add('tested');
+                testedKeys.add(keyCode);
+            }
+
+            // Thêm vào lịch sử gõ phím
+            totalPresses++;
+            document.getElementById('history-count').innerText = `${totalPresses} lượt bấm`;
+            
+            const historyContainer = document.getElementById('key-history');
+            const historyItem = document.createElement('span');
+            historyItem.className = 'px-2.5 py-1 bg-gray-700 text-blue-300 rounded-md text-sm border border-gray-600 shadow-sm transition-all';
+            historyItem.innerText = keyDisplay;
+            historyContainer.appendChild(historyItem);
+            
+            // Tự động cuộn xuống cuối cùng khi lịch sử bị đầy
+            historyContainer.scrollTop = historyContainer.scrollHeight;
+        }
+
+        function handleKeyUp(e) {
+            if(!['F5', 'F12'].includes(e.code)) {
+                e.preventDefault();
+            }
+            const keyCode = e.code;
+            const keyEl = document.getElementById(`key-${keyCode}`);
+            if (keyEl) {
+                keyEl.classList.remove('pressed');
+            }
+        }
+
+        // --- CÁC HÀM TIỆN ÍCH ---
+        function switchOS(os) {
+            currentOS = os;
+            
+            // Đổi style UI nút bấm
+            const btnWin = document.getElementById('btn-win');
+            const btnMac = document.getElementById('btn-mac');
+            
+            if (os === 'win') {
+                btnWin.className = "px-4 py-2 text-sm font-medium rounded-md bg-gray-700 text-white shadow transition-colors";
+                btnMac.className = "px-4 py-2 text-sm font-medium rounded-md text-gray-400 hover:text-white transition-colors";
+            } else {
+                btnMac.className = "px-4 py-2 text-sm font-medium rounded-md bg-gray-700 text-white shadow transition-colors";
+                btnWin.className = "px-4 py-2 text-sm font-medium rounded-md text-gray-400 hover:text-white transition-colors";
+            }
+            
+            renderKeyboard();
+        }
+
+        function resetTest() {
+            testedKeys.clear();
+            totalPresses = 0;
+            document.getElementById('last-key').innerText = '-';
+            document.getElementById('last-code').innerText = '-';
+            
+            // Reset phần lịch sử
+            document.getElementById('history-count').innerText = '0 lượt bấm';
+            document.getElementById('key-history').innerHTML = '';
+            
+            renderKeyboard();
+        }
+
+        // --- KHỞI TẠO ---
+        window.addEventListener('keydown', handleKeyDown);
+        window.addEventListener('keyup', handleKeyUp);
+        
+        // Ngăn chặn chuột phải menu context nếu bấm phím ContextMenu
+        window.addEventListener('contextmenu', (e) => {
+            // e.preventDefault(); // Mở comment dòng này nếu muốn chặn hẳn chuột phải
+        });
+
+        // Tự động render lần đầu
+        renderKeyboard();
+
+    </script>
+</body>
+</html>
